@@ -34,14 +34,9 @@ from firewall.server.config_helper import FirewallDConfigHelper
 from firewall.core.io.icmptype import IcmpType
 from firewall.core.io.ipset import IPSet
 from firewall.core.io.helper import Helper
-from firewall.core.io.lockdown_whitelist import LockdownWhitelist
 from firewall.core.io.direct import Direct
 from firewall.dbus_utils import (
     dbus_to_python,
-    command_of_sender,
-    context_of_sender,
-    uid_of_sender,
-    user_of_uid,
     dbus_introspection_prepare_properties,
     dbus_introspection_add_properties,
     dbus_introspection_add_deprecated,
@@ -71,7 +66,7 @@ CONFIG_PROPERTIES = {
     "CleanupOnExit": ConfigPropertiesTuple("readwrite", False, False),
     "CleanupModulesOnExit": ConfigPropertiesTuple("readwrite", False, False),
     "IPv6_rpfilter": ConfigPropertiesTuple("readwrite", False, False),
-    "Lockdown": ConfigPropertiesTuple("readwrite", False, False),
+    "Lockdown": ConfigPropertiesTuple("readwrite", True, True),
     "IndividualCalls": ConfigPropertiesTuple("readwrite", False, False),
     "LogDenied": ConfigPropertiesTuple("readwrite", False, False),
     "AutomaticHelpers": ConfigPropertiesTuple("readwrite", True, True),
@@ -118,7 +113,6 @@ class FirewallDConfig(DbusServiceObject):
                 path = "%s/%s" % (config.ETC_FIREWALLD_ZONES, filename)
                 if os.path.isdir(path):
                     self.watcher.add_watch_dir(path)
-        self.watcher.add_watch_file(config.LOCKDOWN_WHITELIST)
         self.watcher.add_watch_file(config.FIREWALLD_DIRECT)
         self.watcher.add_watch_file(config.FIREWALLD_CONF)
 
@@ -301,16 +295,6 @@ class FirewallDConfig(DbusServiceObject):
                 self.removeHelper(obj)
             elif what == "update":
                 self._updateHelper(obj)
-
-        elif name == config.LOCKDOWN_WHITELIST:
-            try:
-                self.config.update_lockdown_whitelist()
-            except Exception as msg:
-                log.error(
-                    "Failed to load lockdown whitelist file '%s': %s" % (name, msg)
-                )
-                return
-            self.LockdownWhitelistUpdated()
 
         elif name == config.FIREWALLD_DIRECT:
             try:
@@ -605,25 +589,6 @@ class FirewallDConfig(DbusServiceObject):
                 "restarted. Try `firewall-offline-cmd --check-config`.",
             )
 
-        if self.config.lockdown_enabled():
-            if sender is None:
-                log.error("Lockdown not possible, sender not set.")
-                return
-            bus = dbus.SystemBus()
-            context = context_of_sender(bus, sender)
-            if self.config.access_check("context", context):
-                return
-            uid = uid_of_sender(bus, sender)
-            if self.config.access_check("uid", uid):
-                return
-            user = user_of_uid(uid)
-            if self.config.access_check("user", user):
-                return
-            command = command_of_sender(bus, sender)
-            if self.config.access_check("command", command):
-                return
-            raise FirewallError(errors.ACCESS_DENIED, "lockdown is enabled")
-
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
     # P R O P E R T I E S
@@ -651,9 +616,8 @@ class FirewallDConfig(DbusServiceObject):
                 value = "yes" if config.FALLBACK_CLEANUP_MODULES_ON_EXIT else "no"
             return dbus.String(value)
         elif prop == "Lockdown":
-            if value is None:
-                value = "yes" if config.FALLBACK_LOCKDOWN else "no"
-            return dbus.String(value)
+            # Deprecated and dropped.
+            return dbus.String("no")
         elif prop == "IPv6_rpfilter":
             if value is None:
                 value = "yes" if config.FALLBACK_IPV6_RPFILTER else "no"
@@ -773,7 +737,6 @@ class FirewallDConfig(DbusServiceObject):
                 if property_name in [
                     "CleanupOnExit",
                     "CleanupModulesOnExit",
-                    "Lockdown",
                     "IPv6_rpfilter",
                     "IndividualCalls",
                     "FlushAllOnReload",
@@ -864,34 +827,26 @@ class FirewallDConfig(DbusServiceObject):
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
-        out_signature=LockdownWhitelist.DBUS_SIGNATURE,
+        out_signature="(asasasai)",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def getLockdownWhitelist(self, sender=None):  # pylint: disable=W0613
-        log.debug1("config.policies.getLockdownWhitelist()")
-        return self.config.get_policies().lockdown_whitelist.export_config()
+        return ([], [], [], [0])
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
-        in_signature=LockdownWhitelist.DBUS_SIGNATURE,
+        in_signature="(asasasai)",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def setLockdownWhitelist(self, settings, sender=None):  # pylint: disable=W0613
-        log.debug1("config.policies.setLockdownWhitelist(...)")
-        settings = dbus_to_python(settings)
-        self.config.get_policies().lockdown_whitelist.import_config(settings, {})
-        self.config.get_policies().lockdown_whitelist.write()
-        self.LockdownWhitelistUpdated()
+        pass
 
     @dbus_service_signal(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def LockdownWhitelistUpdated(self):
-        log.debug1("config.policies.LockdownWhitelistUpdated()")
+        pass
 
     # command
 
@@ -900,32 +855,16 @@ class FirewallDConfig(DbusServiceObject):
         in_signature="s",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def addLockdownWhitelistCommand(self, command, sender=None):
-        command = dbus_to_python(command)
-        log.debug1("config.policies.addLockdownWhitelistCommand('%s')", command)
-        self.accessCheck(sender)
-        settings = list(self.getLockdownWhitelist())
-        if command in settings[0]:
-            raise FirewallError(errors.ALREADY_ENABLED, command)
-        settings[0].append(command)
-        self.setLockdownWhitelist(settings)
+        pass
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
         in_signature="s",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def removeLockdownWhitelistCommand(self, command, sender=None):
-        command = dbus_to_python(command)
-        log.debug1("config.policies.removeLockdownWhitelistCommand('%s')", command)
-        self.accessCheck(sender)
-        settings = list(self.getLockdownWhitelist())
-        if command not in settings[0]:
-            raise FirewallError(errors.NOT_ENABLED, command)
-        settings[0].remove(command)
-        self.setLockdownWhitelist(settings)
+        pass
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
@@ -933,23 +872,16 @@ class FirewallDConfig(DbusServiceObject):
         out_signature="b",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
-    def queryLockdownWhitelistCommand(
-        self, command, sender=None
-    ):  # pylint: disable=W0613
-        command = dbus_to_python(command)
-        log.debug1("config.policies.queryLockdownWhitelistCommand('%s')", command)
-        return command in self.getLockdownWhitelist()[0]
+    def queryLockdownWhitelistCommand(self, command, sender=None):
+        return False
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
         out_signature="as",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def getLockdownWhitelistCommands(self, sender=None):  # pylint: disable=W0613
-        log.debug1("config.policies.getLockdownWhitelistCommands()")
-        return self.getLockdownWhitelist()[0]
+        return []
 
     # context
 
@@ -958,32 +890,16 @@ class FirewallDConfig(DbusServiceObject):
         in_signature="s",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def addLockdownWhitelistContext(self, context, sender=None):
-        context = dbus_to_python(context)
-        log.debug1("config.policies.addLockdownWhitelistContext('%s')", context)
-        self.accessCheck(sender)
-        settings = list(self.getLockdownWhitelist())
-        if context in settings[1]:
-            raise FirewallError(errors.ALREADY_ENABLED, context)
-        settings[1].append(context)
-        self.setLockdownWhitelist(settings)
+        pass
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
         in_signature="s",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def removeLockdownWhitelistContext(self, context, sender=None):
-        context = dbus_to_python(context)
-        log.debug1("config.policies.removeLockdownWhitelistContext('%s')", context)
-        self.accessCheck(sender)
-        settings = list(self.getLockdownWhitelist())
-        if context not in settings[1]:
-            raise FirewallError(errors.NOT_ENABLED, context)
-        settings[1].remove(context)
-        self.setLockdownWhitelist(settings)
+        pass
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
@@ -991,23 +907,18 @@ class FirewallDConfig(DbusServiceObject):
         out_signature="b",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def queryLockdownWhitelistContext(
         self, context, sender=None
     ):  # pylint: disable=W0613
-        context = dbus_to_python(context)
-        log.debug1("config.policies.queryLockdownWhitelistContext('%s')", context)
-        return context in self.getLockdownWhitelist()[1]
+        return False
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
         out_signature="as",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def getLockdownWhitelistContexts(self, sender=None):  # pylint: disable=W0613
-        log.debug1("config.policies.getLockdownWhitelistContexts()")
-        return self.getLockdownWhitelist()[1]
+        return []
 
     # user
 
@@ -1016,32 +927,16 @@ class FirewallDConfig(DbusServiceObject):
         in_signature="s",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def addLockdownWhitelistUser(self, user, sender=None):
-        user = dbus_to_python(user)
-        log.debug1("config.policies.addLockdownWhitelistUser('%s')", user)
-        self.accessCheck(sender)
-        settings = list(self.getLockdownWhitelist())
-        if user in settings[2]:
-            raise FirewallError(errors.ALREADY_ENABLED, user)
-        settings[2].append(user)
-        self.setLockdownWhitelist(settings)
+        pass
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
         in_signature="s",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def removeLockdownWhitelistUser(self, user, sender=None):
-        user = dbus_to_python(user)
-        log.debug1("config.policies.removeLockdownWhitelistUser('%s')", user)
-        self.accessCheck(sender)
-        settings = list(self.getLockdownWhitelist())
-        if user not in settings[2]:
-            raise FirewallError(errors.NOT_ENABLED, user)
-        settings[2].remove(user)
-        self.setLockdownWhitelist(settings)
+        pass
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
@@ -1049,21 +944,16 @@ class FirewallDConfig(DbusServiceObject):
         out_signature="b",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def queryLockdownWhitelistUser(self, user, sender=None):  # pylint: disable=W0613
-        user = dbus_to_python(user)
-        log.debug1("config.policies.queryLockdownWhitelistUser('%s')", user)
-        return user in self.getLockdownWhitelist()[2]
+        return False
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
         out_signature="as",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def getLockdownWhitelistUsers(self, sender=None):  # pylint: disable=W0613
-        log.debug1("config.policies.getLockdownWhitelistUsers()")
-        return self.getLockdownWhitelist()[2]
+        return []
 
     # uid
 
@@ -1072,32 +962,16 @@ class FirewallDConfig(DbusServiceObject):
         in_signature="i",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def addLockdownWhitelistUid(self, uid, sender=None):
-        uid = dbus_to_python(uid)
-        log.debug1("config.policies.addLockdownWhitelistUid(%d)", uid)
-        self.accessCheck(sender)
-        settings = list(self.getLockdownWhitelist())
-        if uid in settings[3]:
-            raise FirewallError(errors.ALREADY_ENABLED, uid)
-        settings[3].append(uid)
-        self.setLockdownWhitelist(settings)
+        pass
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
         in_signature="i",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def removeLockdownWhitelistUid(self, uid, sender=None):
-        uid = dbus_to_python(uid)
-        log.debug1("config.policies.removeLockdownWhitelistUid(%d)", uid)
-        self.accessCheck(sender)
-        settings = list(self.getLockdownWhitelist())
-        if uid not in settings[3]:
-            raise FirewallError(errors.NOT_ENABLED, uid)
-        settings[3].remove(uid)
-        self.setLockdownWhitelist(settings)
+        pass
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
@@ -1105,21 +979,16 @@ class FirewallDConfig(DbusServiceObject):
         out_signature="b",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def queryLockdownWhitelistUid(self, uid, sender=None):  # pylint: disable=W0613
-        uid = dbus_to_python(uid)
-        log.debug1("config.policies.queryLockdownWhitelistUid(%d)", uid)
-        return uid in self.getLockdownWhitelist()[3]
+        return False
 
     @dbus_service_method(
         config.dbus.DBUS_INTERFACE_CONFIG_POLICIES,
         out_signature="ai",
         is_deprecated=True,
     )
-    @dbus_handle_exceptions
     def getLockdownWhitelistUids(self, sender=None):  # pylint: disable=W0613
-        log.debug1("config.policies.getLockdownWhitelistUids()")
-        return self.getLockdownWhitelist()[3]
+        return []
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
