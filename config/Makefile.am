@@ -137,6 +137,7 @@ CONFIG_FILES = \
 	services/anno-1602.xml \
 	services/anno-1800.xml \
 	services/apcupsd.xml \
+	services/aseqnet.xml \
 	services/audit.xml \
 	services/ausweisapp2.xml \
 	services/bacula-client.xml \
@@ -254,6 +255,7 @@ CONFIG_FILES = \
 	services/mongodb.xml \
 	services/mosh.xml \
 	services/mountd.xml \
+	services/mpd.xml \
 	services/mqtt.xml \
 	services/mqtt-tls.xml \
 	services/mssql.xml \
@@ -295,6 +297,7 @@ CONFIG_FILES = \
 	services/puppetmaster.xml \
 	services/quassel.xml \
 	services/radius.xml \
+	services/radsec.xml \
 	services/rdp.xml \
 	services/redis-sentinel.xml \
 	services/redis.xml \
