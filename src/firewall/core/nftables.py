@@ -1732,11 +1732,9 @@ class nftables:
 
         log_options = {}
         if isinstance(rich_rule.log, Rich_NFLog):
-            log_options["group"] = (
-                int(rich_rule.log.group) if rich_rule.log.group else 0
-            )
+            log_options["group"] = rich_rule.log.group
             if rich_rule.log.threshold:
-                log_options["queue-threshold"] = int(rich_rule.log.threshold)
+                log_options["queue-threshold"] = rich_rule.log.threshold
         else:
             if rich_rule.log.level:
                 level = (
@@ -2074,7 +2072,7 @@ class nftables:
             }
         )
 
-        if tcp_mss_clamp_value == "pmtu" or tcp_mss_clamp_value is None:
+        if tcp_mss_clamp_value == "pmtu" or not tcp_mss_clamp_value:
             expr_fragments.append(
                 {
                     "mangle": {
@@ -2384,23 +2382,14 @@ class nftables:
                 % (icmp_type, self.name, ipv),
             )
 
-    def build_policy_icmp_block_rules(self, enable, policy, ict, rich_rule=None):
+    def build_policy_icmp_block_rules(
+        self, enable, policy, ict, rich_rule=None, ipvs=["ipv4", "ipv6"]
+    ):
         table = "filter"
         _policy = self._fw.policy.policy_base_chain_name(
             policy, table, POLICY_CHAIN_PREFIX
         )
         add_del = {True: "add", False: "delete"}[enable]
-
-        if rich_rule and rich_rule.ipvs:
-            ipvs = rich_rule.ipvs
-        elif ict.destination:
-            ipvs = []
-            if "ipv4" in ict.destination:
-                ipvs.append("ipv4")
-            if "ipv6" in ict.destination:
-                ipvs.append("ipv6")
-        else:
-            ipvs = ["ipv4", "ipv6"]
 
         rules = []
         for ipv in ipvs:
