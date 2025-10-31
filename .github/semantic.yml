@@ -1,0 +1,17 @@
+# We follow "rebase and merge" strategy
+#
+commitsOnly: true
+anyCommit: false
+allowMergeCommits: false
+
+types:
+  - build
+  - chore
+  - ci
+  - doc
+  - docs
+  - feat
+  - fix
+  - improvement
+  - revert
+  - test
