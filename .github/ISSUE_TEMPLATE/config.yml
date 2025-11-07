@@ -1,8 +1,0 @@
-blank_issues_enabled: true
-contact_links:
-  - name: Firewalld Usage Mailing List
-    url: https://lists.fedorahosted.org/archives/list/firewalld-users@lists.fedorahosted.org/
-    about: For questions and answers regarding the usage of firewalld. Issues should be submitted via the issue tracker.
-  - name: Firewalld Development Mailing List
-    url: https://lists.fedorahosted.org/archives/list/firewalld-devel@lists.fedorahosted.org/
-    about: For development discussion of firewalld. Issues should be submitted via the issue tracker.
