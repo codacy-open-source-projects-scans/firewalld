@@ -19,15 +19,15 @@
 # Eric Garver <e@erig.me>, 2018. #zanata
 # Qiyu Yan <yanqiyu01@gmail.com>, 2018. #zanata
 # Pany <pany@fedoraproject.org>, 2019. #zanata
-# Pany <geekpany@gmail.com>, 2020.
+# Pany <geekpany@gmail.com>, 2020, 2025.
 # Charles Lee <lchopn@gmail.com>, 2020.
-# Tianhao Chai <cth451@gmail.com>, 2021.
+# Tianhao Chai <cth451@gmail.com>, 2021, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-06 14:46-0500\n"
-"PO-Revision-Date: 2021-03-27 23:01+0000\n"
+"PO-Revision-Date: 2025-11-13 20:57+0000\n"
 "Last-Translator: Tianhao Chai <cth451@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/firewalld/master/zh_CN/>\n"
@@ -36,7 +36,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.5.2\n"
+"X-Generator: Weblate 5.14.3\n"
 
 #: ../config/firewall-applet.desktop.in.h:1 ../src/firewall-applet.in:450
 msgid "Firewall Applet"

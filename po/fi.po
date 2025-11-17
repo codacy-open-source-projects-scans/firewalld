@@ -8,17 +8,17 @@
 # Lauri Nurmi <lanurmi@iki.fi>, 2004
 # Mikko Ikola <ikola@iki.fi>, 2004
 # Juhani Numminen <juhaninumminen0@gmail.com>, 2016. #zanata
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2017. #zanata, 2020.
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2017. #zanata, 2020, 2025.
 # Toni Rantala <trantalafilo@gmail.com>, 2017. #zanata
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2018. #zanata, 2020.
-# Jan Kuparinen <copper_fin@hotmail.com>, 2021.
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2018. #zanata, 2020, 2025.
+# Jan Kuparinen <copper_fin@hotmail.com>, 2021, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-06 14:46-0500\n"
-"PO-Revision-Date: 2021-02-17 19:40+0000\n"
-"Last-Translator: Jan Kuparinen <copper_fin@hotmail.com>\n"
+"PO-Revision-Date: 2025-11-13 20:46+0000\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/"
 "firewalld/master/fi/>\n"
 "Language: fi\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.4.2\n"
+"X-Generator: Weblate 5.14.3\n"
 
 #: ../config/firewall-applet.desktop.in.h:1 ../src/firewall-applet.in:450
 msgid "Firewall Applet"
@@ -79,9 +79,7 @@ msgstr "Palomuuriasetukset"
 #. Translators: These are searchable keywords for the firewall configuration tool
 #: ../config/firewall-config.desktop.in.h:4
 msgid "firewall;network;security;iptables;netfilter;"
-msgstr ""
-"palomuuri;verkko;tietoturva;suojaus;turva;firewall;network;security;iptables;"
-"netfilter;"
+msgstr "palomuuri;verkko;tietoturva;suojaus;turva;firewall;network;security;iptables;netfilter;"
 
 #: ../src/firewall-applet.in:91 ../src/firewall-config.in:7690
 #, c-format

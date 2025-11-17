@@ -14,13 +14,15 @@
 # SuSE Linux Products GmbH, Nuernberg, 2018
 # Eric Garver <e@erig.me>, 2018. #zanata
 # Mostafa Gamal <mostafa.2c6@gmail.com>, 2022.
+# joo es <jonnyse@users.noreply.translate.fedoraproject.org>, 2025.
+# Khalid Abu Shawarib <khalid.shawarib@gmail.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-06 14:46-0500\n"
-"PO-Revision-Date: 2022-05-23 16:18+0000\n"
-"Last-Translator: Mostafa Gamal <mostafa.2c6@gmail.com>\n"
+"PO-Revision-Date: 2025-11-13 20:40+0000\n"
+"Last-Translator: Khalid Abu Shawarib <khalid.shawarib@gmail.com>\n"
 "Language-Team: Arabic <https://translate.fedoraproject.org/projects/"
 "firewalld/master/ar/>\n"
 "Language: ar\n"
@@ -29,7 +31,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 4.12.2\n"
+"X-Generator: Weblate 5.14.3\n"
 
 #: ../config/firewall-applet.desktop.in.h:1 ../src/firewall-applet.in:450
 msgid "Firewall Applet"
@@ -38,38 +40,35 @@ msgstr "التطبيق الصغير للجدار الناري"
 #: ../config/firewall-config.appdata.xml.in.h:1
 msgid ""
 "Firewall Configuration provides a graphical tool for administering firewall."
-msgstr ""
+msgstr "يوفر إعدادات الجدار الناري أداة رسومية لإدارة الجدار الناري."
 
 #: ../config/firewall-config.appdata.xml.in.h:2
-#, fuzzy
 msgid "Allows to inspect and set:"
-msgstr "الرجاء تحديد ipset:"
+msgstr "يسمح بالتفتيش والتعيين:"
 
 #: ../config/firewall-config.appdata.xml.in.h:3
-#, fuzzy
 msgid "Runtime and permanent firewall configuration"
-msgstr "إعدادات الجدار النّاري"
+msgstr "وقت التشغيل وتضبيط الجدار النّاري"
 
 #: ../config/firewall-config.appdata.xml.in.h:4
-#, fuzzy
 msgid "Predefined zones (levels of trust for network connections)"
-msgstr "المنطقة الافتراضية المستخدمة بواسطة اتصال الشبكة '%s'"
+msgstr "مناطق مُحدّدة مسبقًا (مستويات الثقة لاتصالات الشبكة)"
 
 #: ../config/firewall-config.appdata.xml.in.h:5
 msgid "Predefined services (port/protocol, netfilter helper module)"
-msgstr ""
+msgstr "خدمات مُحدّدة مسبقًا (منفذ/بروتوكول، Netfilter وحدة نمطية مساعدة)"
 
 #: ../config/firewall-config.appdata.xml.in.h:6
 msgid "Port forwarding, masquerading, ICMP blocking"
-msgstr ""
+msgstr "إعادة توجيه المنفذ، التنكر، حظر ICMP"
 
 #: ../config/firewall-config.appdata.xml.in.h:7
 msgid "Complex firewall rules a.k.a. Rich Language"
-msgstr ""
+msgstr "قواعد الجدار الناري المعقدة مثل اللغة الغنية"
 
 #: ../config/firewall-config.appdata.xml.in.h:8
 msgid "Iptables rules a.k.a. Direct Interface"
-msgstr ""
+msgstr "قواعد Iptables المعروفة أيضًا باسم الواجهة المباشرة"
 
 #: ../config/firewall-config.desktop.in.h:1
 msgid "Firewall"
@@ -82,7 +81,7 @@ msgstr "إعدادات الجدار النّاري"
 #. Translators: These are searchable keywords for the firewall configuration tool
 #: ../config/firewall-config.desktop.in.h:4
 msgid "firewall;network;security;iptables;netfilter;"
-msgstr "firewall;network;security;iptables;netfilter;"
+msgstr "firewall;network;security;iptables;netfilter;جدار الحماية;جدار ناري;"
 
 #: ../src/firewall-applet.in:91 ../src/firewall-config.in:7690
 #, c-format
@@ -136,7 +135,7 @@ msgstr "إعادة تعيين للافتراضي"
 
 #: ../src/firewall-applet.in:269
 msgid "Shields Down Zone:"
-msgstr "منطقة خفض الدروع"
+msgstr "منطقة خفض الدروع:"
 
 #: ../src/firewall-applet.in:368
 #, c-format
@@ -265,7 +264,7 @@ msgstr "لا توجد مناطق نشطة."
 
 #: ../src/firewall-applet.in:1028
 msgid "Connection to FirewallD established."
-msgstr "تم تأسيس الاتصال مع FirewallD"
+msgstr "أنشئت اتصال ب FirewallD."
 
 #: ../src/firewall-applet.in:1040
 msgid "Connection to FirewallD lost."
@@ -811,7 +810,7 @@ msgstr "nat"
 
 #: ../src/firewall-config.glade.h:12
 msgid "raw"
-msgstr "raw"
+msgstr "خام"
 
 #: ../src/firewall-config.glade.h:13
 msgid "security"
@@ -844,11 +843,11 @@ msgstr "الرجاء تحديد المصدر وخيارات الوجهه وفق�
 
 #: ../src/firewall-config.glade.h:20
 msgid "Port / Port Range:"
-msgstr "مَنفذ/مدى المَنفذ"
+msgstr "مَنفذ/مدى المَنفذ:"
 
 #: ../src/firewall-config.glade.h:21
 msgid "IP address:"
-msgstr "رقم العنوان عبر الشبكة"
+msgstr "عنوان IP:"
 
 #: ../src/firewall-config.glade.h:22
 msgid "Protocol:"
@@ -973,7 +972,7 @@ msgid ""
 "lost with reload if they have not been also in permanent configuration."
 msgstr ""
 "إعادة تحميل قواعد الجدار الناري. سيصبح التكوين الدائم الحالي هو تكوين وقت "
-"التشغيل الجديد، أي سيتم فقدان كل تغييرات وقت التشغيل فقط  التي تمت حتى إعادة "
+"التشغيل الجديد، أي سيتم فقدان كل تغييرات وقت التشغيل فقط التي تمت حتى إعادة "
 "التحميل مع عملية إعادة التحميل إذا لم تتم في التكوين الدائم أيضًا."
 
 #: ../src/firewall-config.glade.h:56
@@ -1411,7 +1410,7 @@ msgid ""
 "example IP addresses, port numbers or MAC addresses. "
 msgstr ""
 "يمكن استخدام IPSet لإنشاء قوائم بيضاء أو سوداء ويمكنه تخزين على سبيل المثال، "
-"عناوين IP أو أعداد المنافذ أو عناوين MAC."
+"عناوين IP أو أعداد المنافذ أو عناوين MAC. "
 
 #: ../src/firewall-config.glade.h:148
 msgid "IPSet"
@@ -1726,7 +1725,7 @@ msgstr "القناع:"
 
 #: ../src/firewall-config.glade.h:213
 msgid "Please select a netfilter conntrack helper:"
-msgstr "الرجاء تحديد مساعد تتبع اتصال netfilter:"
+msgstr "الرجاء تحديد مساعد netfilter conntrack:"
 
 #: ../src/firewall-config.glade.h:214
 msgid "- Select -"
@@ -1806,7 +1805,7 @@ msgid ""
 "(not both)."
 msgstr ""
 "لتمكين هذا، يجب أن يكون الإجراء 'رفض' والعائلة إما 'ipv4' أو 'ipv6' (ليس "
-"كلاهما)"
+"كلاهما)."
 
 #: ../src/firewall-config.glade.h:238
 msgid "with Type:"

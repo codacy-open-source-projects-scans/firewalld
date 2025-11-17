@@ -20,13 +20,13 @@
 # Meskó Balázs <meskobalazs@gmail.com>, 2017. #zanata
 # Eric Garver <e@erig.me>, 2018. #zanata
 # Meskó Balázs <meskobalazs@gmail.com>, 2018. #zanata
-# Balázs Meskó <meskobalazs@mailbox.org>, 2020.
+# Balázs Meskó <meskobalazs@mailbox.org>, 2020, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-11-06 14:46-0500\n"
-"PO-Revision-Date: 2020-07-21 14:28+0000\n"
+"PO-Revision-Date: 2025-11-13 20:48+0000\n"
 "Last-Translator: Balázs Meskó <meskobalazs@mailbox.org>\n"
 "Language-Team: Hungarian <https://translate.fedoraproject.org/projects/"
 "firewalld/master/hu/>\n"
@@ -35,7 +35,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 5.14.3\n"
 
 #: ../config/firewall-applet.desktop.in.h:1 ../src/firewall-applet.in:450
 msgid "Firewall Applet"
