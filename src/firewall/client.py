@@ -3487,8 +3487,10 @@ class FirewallClient:
         )
 
     @handle_exceptions
-    def setPolicySettings(self, policy, settings):
-        self.fw_policy.setPolicySettings(policy, settings.getRuntimeSettingsDbusDict())
+    def setPolicySettings(self, policy, settings, timeout=0):
+        settings = settings.getRuntimeSettingsDbusDict()
+        settings["timeout"] = timeout
+        self.fw_policy.setPolicySettings(policy, settings)
 
     @handle_exceptions
     def getPolicies(self):
@@ -3625,8 +3627,8 @@ class FirewallClient:
     # forward
 
     @handle_exceptions
-    def addForward(self, zone):
-        self.fw_zone.setZoneSettings2(zone, {"forward": True})
+    def addForward(self, zone, timeout=0):
+        self.fw_zone.setZoneSettings2(zone, {"forward": True, "timeout": timeout})
 
     @handle_exceptions
     def queryForward(self, zone):
