@@ -104,6 +104,15 @@ m4_define([FWD_START_TEST], [
     AT_KEYWORDS([m4_bregexp(__file__, [^.*/\([^/]*\)\.at$], [\1])])
     AT_KEYWORDS([m4_bregexp(__file__, [^\(.*\)/[^/]*$], [\1])])
 
+    dnl empty config directories so we don't have a bunch of mkdir's in test
+    dnl cases
+    AT_CHECK([mkdir -p ./helpers])
+    AT_CHECK([mkdir -p ./icmptypes])
+    AT_CHECK([mkdir -p ./ipsets])
+    AT_CHECK([mkdir -p ./policies])
+    AT_CHECK([mkdir -p ./services])
+    AT_CHECK([mkdir -p ./zones])
+
     dnl Default values for things that should be defined in atlocal. If atlocal
     dnl can't be found it's likely because the testsuite is run "standalone" and
     dnl atconfig/atlocal aren't available. There should be one here for every value
@@ -283,7 +292,8 @@ m4_define([FWD_END_TEST], [
             AT_FAIL_IF([cat ./firewalld.log | dnl
                        sed "/WARNING: ip6tables not usable, disabling IPv6 firewall/d" | dnl
                        m4_ifnblank([$1], [sed $1 |]) dnl
-                       [grep '^[0-9-]*[ ]\+[0-9:]*[ ]\+\(ERROR\|WARNING\)']])
+                       grep -e ['^[0-9-]*[ ]\+[0-9:]*[ ]\+\(ERROR\|WARNING\)'] dnl
+                            -e ['Detected permanent.* configuration change']])
         fi
         m4_ifdef([CURRENT_DBUS_ADDRESS], [m4_undefine([CURRENT_DBUS_ADDRESS])])
         m4_ifdef([CURRENT_TEST_NS], [m4_undefine([CURRENT_TEST_NS])])
